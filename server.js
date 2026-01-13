@@ -3,24 +3,15 @@ const app = express();
 
 app.use(express.json());
 
-/*
-  DATA DISIMPAN DI RAM
-  (cukup untuk monitoring, gratis, tanpa database)
-*/
-let servers = {};          // jobId -> { players, placeId, lastSeen }
-let revenueToday = 0;      // total Robux hari ini
-let donations = [];        // list donasi terakhir
 
-// ======================================================
-// ROOT (OPTIONAL, BIAR TIDAK "Cannot GET /")
-// ======================================================
+let servers = {};         
+let revenueToday = 0;   
+let donations = [];       
+
 app.get("/", (req, res) => {
 	res.send("Hoox Backend is running 🚀");
 });
 
-// ======================================================
-// ROBLOX → HEARTBEAT (SERVER + PLAYER)
-// ======================================================
 app.post("/heartbeat", (req, res) => {
 	const { jobId, placeId, players } = req.body;
 
@@ -37,9 +28,6 @@ app.post("/heartbeat", (req, res) => {
 	res.json({ ok: true });
 });
 
-// ======================================================
-// ROBLOX → DONATION / ESTIMASI ROBUX
-// ======================================================
 app.post("/donation", (req, res) => {
 	const { playerId, productId, robux, time } = req.body;
 
@@ -64,13 +52,10 @@ app.post("/donation", (req, res) => {
 	res.json({ ok: true });
 });
 
-// ======================================================
-// ANDROID → AMBIL STATISTIK
-// ======================================================
+
 app.get("/stats", (req, res) => {
 	const now = Date.now();
 
-	// hapus server yang mati (>60 detik tidak heartbeat)
 	for (const jobId in servers) {
 		if (now - servers[jobId].lastSeen > 60000) {
 			delete servers[jobId];
@@ -88,9 +73,7 @@ app.get("/stats", (req, res) => {
 	});
 });
 
-// ======================================================
-// START SERVER
-// ======================================================
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
 	console.log("Hoox Backend running on port", PORT);
