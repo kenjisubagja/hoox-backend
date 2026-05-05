@@ -44,7 +44,6 @@ app.post("/donation", (req, res) => {
 		time: time || Date.now()
 	});
 
-	// simpan maksimal 50 donasi terakhir
 	if (donations.length > 50) {
 		donations.shift();
 	}
